@@ -17,10 +17,11 @@ import sys
 
 ROOT_DIR = '../../aktwelve_Mask_RCNN'
 assert os.path.exists(ROOT_DIR)
-sys.path.append(ROOT_DIR) 
+sys.path.append(ROOT_DIR)
 import mrcnn.utils as utils
 import mrcnn.model as modellib
 from mrcnn.config import Config
+
 
 # In[14]:
 
@@ -32,14 +33,13 @@ if not os.path.exists(COCO_MODEL_PATH):
     utils.download_trained_weights(COCO_MODEL_PATH)
 
 
-# In[24]:
-class MallConfig(Config):
+class PersonConfig(Config):
     """Configuration for training on the classroom_data dataset.
     Derives from the base Config class and overrides values specific
     to the classroom_data dataset.
     """
     # Give the configuration a recognizable name
-    NAME = "Mall"
+    NAME = "Person"
 
     # Train on 1 GPU and 1 image per GPU. Batch size is 1 (GPUs * images/GPU).
     GPU_COUNT = 1
@@ -52,31 +52,31 @@ class MallConfig(Config):
 
     # Change this later based on the dimension of images formed from extracting from video
     IMAGE_MIN_DIM = 256
-    IMAGE_MAX_DIM = 320
+    IMAGE_MAX_DIM = 1280
 
     # You can experiment with this number to see if it improves training
-    STEPS_PER_EPOCH = 200
+    STEPS_PER_EPOCH = 100
 
     # This is how often validation is run. If you are using too much hard drive space
     # on saved models (in the MODEL_DIR), try making this value larger.
-    VALIDATION_STEPS = 4
+    VALIDATION_STEPS = 10
 
     BACKBONE = 'resnet101'
 
     RPN_ANCHOR_SCALES = (16, 32, 64, 128, 256)
     TRAIN_ROIS_PER_IMAGE = 32
     MAX_GT_INSTANCES = 50
-    POST_NMS_ROIS_INFERENCE = 500
-    POST_NMS_ROIS_TRAINING = 1000
 
 
-config = MallConfig()
+config = PersonConfig()
 config.display()
 
-class InferenceConfig(MallConfig):
+
+class InferenceConfig(PersonConfig):
     GPU_COUNT = 1
     IMAGES_PER_GPU = 1
     DETECTION_MIN_CONFIDENCE = 0.85
+
 
 inference_config = InferenceConfig()
 inference_config.display()
@@ -85,15 +85,15 @@ inference_config.display()
 # In[25]:
 
 
-model = modellib.MaskRCNN(mode="inference", 
+model = modellib.MaskRCNN(mode="inference",
                           config=inference_config,
                           model_dir=MODEL_DIR)
 
 
 # In[26]:
 
-
-model.load_weights('../../aktwelve_Mask_RCNN/logs/mall20210423T1210/mask_rcnn_mall_0003.h5', by_name=True)
+#replace model weights
+model.load_weights('../../aktwelve_Mask_RCNN/logs\person20210612T1908/mask_rcnn_person_0010.h5', by_name=True)
 
 
 # In[27]:
@@ -109,7 +109,8 @@ class_names = [
 
 def random_colors(N):
     np.random.seed(1)
-    colors = [tuple(255 * np.random.rand(3)) for _ in range(N)]
+    # colors = [tuple(255 * np.random.rand(3)) for _ in range(N)]
+    colors = [(0,255,0) for _ in range(N)]
     return colors
 
 
@@ -160,6 +161,7 @@ def display_instances(image, boxes, masks, ids, names, scores):
 
         image = apply_mask(image, mask, color)
         image = cv2.rectangle(image, (x1, y1), (x2, y2), color, 2)
+        image = cv2.circle(image,(int((x1+x2)/2),int((y1+y2)/2)),5,(0,0,0),-1)
         image = cv2.putText(
             image, caption, (x1, y1), cv2.FONT_HERSHEY_COMPLEX, 0.7, color, 2
         )

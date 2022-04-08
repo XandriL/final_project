@@ -1,0 +1,26 @@
+<annotation>
+	<folder>zaza</folder>
+	<filename>i608zc-fn.jpg</filename>
+	<path>C:\Users\MasDrago\Desktop\zaza\i608zc-fn.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>480</width>
+		<height>640</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>no-mask</name>
+		<pose>Unspecified</pose>
+		<truncated>1</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>214</xmin>
+			<ymin>161</ymin>
+			<xmax>480</xmax>
+			<ymax>513</ymax>
+		</bndbox>
+	</object>
+</annotation>
